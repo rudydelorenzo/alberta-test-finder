@@ -31,13 +31,14 @@ public class Appointment {
         time = input;
     }
     
-    public void printInfo() {
-        System.out.println("-------------- APPOINTMENT --------------");
-        System.out.println("Place: " + place);
-        System.out.println("Address: " + address);
-        System.out.println("Date: " + date);
-        System.out.println("Time: " + time);
-        System.out.println();
+    @Override
+    public String toString() {
+        String s = "-------------- APPOINTMENT --------------\n";
+        s += ("Place: " + place + "\n");
+        s += ("Address: " + address + "\n");
+        s += ("Date: " + date + "\n");
+        s += ("Time: " + time + "\n");
+        return s;
     }
     
     public boolean equals(Appointment comp) {

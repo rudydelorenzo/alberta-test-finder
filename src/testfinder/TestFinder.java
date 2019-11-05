@@ -20,6 +20,7 @@ public class TestFinder {
     public static String baseURL = "https://scheduler.itialb4dmv.com/SchAlberta/Applicant/Information";
     public static ArrayList<Appointment> previousResults = new ArrayList();
     public static int interval = 10; //in seconds
+    public static boolean headless = true;
     
     //email stuff
     public static String to = "rdelorenzo5@gmail.com";
@@ -62,7 +63,7 @@ public class TestFinder {
             textBox.submit();
             //now we're selecting the test we're doing
             Select testDropDown = new Select(driver.findElement(By.id("serviceGroupList")));
-            testDropDown.selectByValue("5"); //class 3 is value 5, class 5 is 7
+            testDropDown.selectByValue("7"); //class 3 is value 5, class 5 is 7
             WebElement acceptTestTerms  = driver.findElement(By.id("labelAcceptTerms"));
             boolean failed = true;
             while (failed) {
@@ -127,14 +128,17 @@ public class TestFinder {
                                     InternetAddress.parse(to)
                             );
                             message.setSubject("New Road Test Openings!");
-                            message.setText("Dear Mail Crawler,"
-                                    + "\n\n Please do not spam my email!");
+                            String emailText = "";
+                            for (Appointment a : appointments) {
+                                emailText += a.toString();
+                                emailText += "\n";
+                            }
+                            message.setText(emailText);
 
                             Transport.send(message);
                         } catch (MessagingException e) {
                             e.printStackTrace();
                         }
-                        System.out.println("EMail sent");
                     }
                 } else {
                     //there are no openings
@@ -145,8 +149,10 @@ public class TestFinder {
                 for (Appointment a : appointments) {
                     previousResults.add(a);
                 }
+                while (driver.getCurrentUrl().equals("https://scheduler.itialb4dmv.com/SchAlberta/Appointment/Search")) {
+                    content.findElement(By.cssSelector("button[onclick='goBack()']")).click();
+                }
                 Thread.sleep(interval*1000);  // Pause before trying again
-                content.findElement(By.cssSelector("button[onclick='goBack()']")).click();
                 //flip two lines above for slightly better performance
             }
             //driver.quit(); //Shut down the program
