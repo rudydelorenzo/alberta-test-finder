@@ -1,6 +1,8 @@
 package testfinder;
 
 import java.util.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -34,7 +36,10 @@ public class TestFinder {
         try {
             System.setProperty("webdriver.chrome.driver","chromedriver");
             
-            WebDriver driver = new ChromeDriver();
+            ChromeOptions chromeOptions = new ChromeOptions();
+            if (headless) chromeOptions.addArguments("--headless");
+            
+            WebDriver driver = new ChromeDriver(chromeOptions);
             driver.get(baseURL);
             while (driver.findElement(By.tagName("h1")).getText().equals("Service Unavailable")) {
                 // page is out of service, wait for a minute, then refresh
@@ -103,7 +108,7 @@ public class TestFinder {
                     } else {
                         different = true;
                     }
-                    if (different) {
+                    if (different && !appointments.isEmpty()) {
                         //compose and send mail
                         Properties props = new Properties();
                         props.put("mail.smtp.host", host);
@@ -142,7 +147,15 @@ public class TestFinder {
                     }
                 } else {
                     //there are no openings
-                    System.out.println("Veredict: No Openings");
+                }
+                Date date = new Date(System.currentTimeMillis());
+                DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                formatter.setTimeZone(TimeZone.getTimeZone("MST"));
+                String dateFormatted = formatter.format(date);
+                if (appointments.isEmpty()) {
+                    System.out.println(dateFormatted + ": No Openings");
+                } else {
+                    System.out.println(dateFormatted + ": " + appointments.size() + " Openings Found");
                 }
                 //transfer contents from current results to previous results
                 previousResults = new ArrayList();
@@ -153,7 +166,6 @@ public class TestFinder {
                     content.findElement(By.cssSelector("button[onclick='goBack()']")).click();
                 }
                 Thread.sleep(interval*1000);  // Pause before trying again
-                //flip two lines above for slightly better performance
             }
             //driver.quit(); //Shut down the program
         } catch (InterruptedException e) {
