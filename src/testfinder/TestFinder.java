@@ -15,6 +15,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.*;
+import org.openqa.selenium.firefox.*;
 import org.openqa.selenium.support.ui.Select;
 
 //todo: add author info, add support for multiple platforms (different chromedrivers),
@@ -39,16 +40,24 @@ public class TestFinder {
     
     public static void main(String[] args) {
         
+        WebDriver driver;
+        
         String os = System.getProperty("os.name");
         System.out.println(os);
-        if (os.toLowerCase().contains("mac")) System.setProperty("webdriver.chrome.driver","chromedriver");
-        else System.setProperty("webdriver.chrome.driver","/usr/bin/chromedriver");
-            
-        ChromeOptions chromeOptions = new ChromeOptions();
-        if (headless) chromeOptions.addArguments("--headless");
-        if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
+        if (os.toLowerCase().contains("mac")) {
+            //use chrome
+            System.setProperty("webdriver.chrome.driver","chromedriver");
+            ChromeOptions chromeOptions = new ChromeOptions();
+            if (headless) chromeOptions.addArguments("--headless");
+            if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
+            driver = new ChromeDriver(chromeOptions);
+        }
+        else {
+            //use firefox
+            System.setProperty("webdriver.gecko.driver","/usr/local/bin/geckodriver");
+            driver = new FirefoxDriver();
+        }
 
-        WebDriver driver = new ChromeDriver(chromeOptions);
         driver.get(baseURL);
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
