@@ -31,6 +31,22 @@ public class Appointment {
         time = input;
     }
     
+    public String getPlace() {
+        return place;
+    }
+    
+    public String getAddress() {
+        return address;
+    }
+    
+    public String getDate() {
+        return date;
+    }
+    
+    public String getTime() {
+        return time;
+    }
+    
     @Override
     public String toString() {
         String s = "-------------- APPOINTMENT --------------\n";
@@ -42,7 +58,10 @@ public class Appointment {
     }
     
     public boolean equals(Appointment comp) {
-        return true;
+        if (!place.equals(comp.getPlace())) return false;
+        if (!address.equals(comp.getAddress())) return false;
+        if (!date.equals(comp.getDate())) return false;
+        return time.equals(comp.getTime());
     }
     
 }

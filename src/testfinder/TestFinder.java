@@ -23,6 +23,7 @@ public class TestFinder {
     public static ArrayList<Appointment> previousResults = new ArrayList();
     public static int interval = 10; //in seconds
     public static boolean headless = true;
+    public static boolean noImages = true;
     
     //email stuff
     public static String to = "rdelorenzo5@gmail.com";
@@ -38,6 +39,7 @@ public class TestFinder {
             
             ChromeOptions chromeOptions = new ChromeOptions();
             if (headless) chromeOptions.addArguments("--headless");
+            if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
             
             WebDriver driver = new ChromeDriver(chromeOptions);
             driver.get(baseURL);
@@ -125,7 +127,6 @@ public class TestFinder {
                                 });
                         
                         try {
-
                             Message message = new MimeMessage(session);
                             message.setFrom(new InternetAddress(from));
                             message.setRecipients(
