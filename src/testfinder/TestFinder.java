@@ -34,15 +34,25 @@ public class TestFinder {
     public static int port = 465;
     
     public static void main(String[] args) {
+        
+        System.setProperty("webdriver.chrome.driver","chromedriver");
+            
+        ChromeOptions chromeOptions = new ChromeOptions();
+        if (headless) chromeOptions.addArguments("--headless");
+        if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
+
+        WebDriver driver = new ChromeDriver(chromeOptions);
+        driver.get(baseURL);
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                //close driver whenever application exits
+                driver.quit();
+            }
+        });
+        
         try {
-            System.setProperty("webdriver.chrome.driver","chromedriver");
-            
-            ChromeOptions chromeOptions = new ChromeOptions();
-            if (headless) chromeOptions.addArguments("--headless");
-            if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
-            
-            WebDriver driver = new ChromeDriver(chromeOptions);
-            driver.get(baseURL);
             while (driver.findElement(By.tagName("h1")).getText().equals("Service Unavailable")) {
                 // page is out of service, wait for a minute, then refresh
                 Thread.sleep(60000);
@@ -136,7 +146,6 @@ public class TestFinder {
                 }
                 Thread.sleep(interval*1000);  // Pause before trying again
             }
-            //driver.quit(); //Shut down the program
         } catch (InterruptedException e) {
             System.out.println("crashed");
         }
@@ -177,5 +186,4 @@ public class TestFinder {
             e.printStackTrace();
         }
     }
-    
 }
