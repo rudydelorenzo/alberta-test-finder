@@ -17,6 +17,9 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.*;
 import org.openqa.selenium.support.ui.Select;
 
+//todo: add author info, add support for multiple platforms (different chromedrivers),
+//make way to launch easily, add support for firefox (not necessary)
+//make first github release
 
 public class TestFinder {
     
