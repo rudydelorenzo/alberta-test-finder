@@ -1,5 +1,6 @@
 package testfinder;
 
+import java.net.ConnectException;
 import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -47,8 +48,11 @@ public class TestFinder {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                //close driver whenever application exits
-                driver.quit();
+                //close driver correctlywhenever application exits
+                try {
+                    driver.quit();
+                } catch (WebDriverException e) {}
+                System.out.println("Driver stopped correctly!");
             }
         });
         
@@ -149,6 +153,7 @@ public class TestFinder {
         } catch (InterruptedException e) {
             System.out.println("crashed");
         }
+            
     }
     
     public static void sendEmail(ArrayList<Appointment> appointments) {
