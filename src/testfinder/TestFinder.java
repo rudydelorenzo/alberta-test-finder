@@ -36,7 +36,10 @@ public class TestFinder {
     
     public static void main(String[] args) {
         
-        System.setProperty("webdriver.chrome.driver","chromedriver");
+        String os = System.getProperty("os.name");
+        System.out.println(os);
+        if (os.toLowerCase().contains("mac")) System.setProperty("webdriver.chrome.driver","chromedriver");
+        else System.setProperty("webdriver.chrome.driver","/usr/bin/chromedriver");
             
         ChromeOptions chromeOptions = new ChromeOptions();
         if (headless) chromeOptions.addArguments("--headless");
