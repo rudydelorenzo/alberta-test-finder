@@ -112,39 +112,7 @@ public class TestFinder {
                     }
                     if (different && !appointments.isEmpty()) {
                         //compose and send mail
-                        Properties props = new Properties();
-                        props.put("mail.smtp.host", host);
-                        props.put("mail.smtp.port", port);
-                        props.put("mail.smtp.auth", "true");
-                        props.put("mail.smtp.socketFactory.port", port);
-                        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-                        
-                        Session session = Session.getInstance(props,
-                                new javax.mail.Authenticator() {
-                                    protected PasswordAuthentication getPasswordAuthentication() {
-                                        return new PasswordAuthentication(username, password);
-                                    }
-                                });
-                        
-                        try {
-                            Message message = new MimeMessage(session);
-                            message.setFrom(new InternetAddress(from));
-                            message.setRecipients(
-                                    Message.RecipientType.TO,
-                                    InternetAddress.parse(to)
-                            );
-                            message.setSubject("New Road Test Openings!");
-                            String emailText = "";
-                            for (Appointment a : appointments) {
-                                emailText += a.toString();
-                                emailText += "\n";
-                            }
-                            message.setText(emailText);
-
-                            Transport.send(message);
-                        } catch (MessagingException e) {
-                            e.printStackTrace();
-                        }
+                        sendEmail(appointments);
                     }
                 } else {
                     //there are no openings
@@ -156,7 +124,7 @@ public class TestFinder {
                 if (appointments.isEmpty()) {
                     System.out.println(dateFormatted + ": No Openings");
                 } else {
-                    System.out.println(dateFormatted + ": " + appointments.size() + " Openings Found");
+                    System.out.println(dateFormatted + ": " + appointments.size() + " Opening(s) Found");
                 }
                 //transfer contents from current results to previous results
                 previousResults = new ArrayList();
@@ -171,6 +139,42 @@ public class TestFinder {
             //driver.quit(); //Shut down the program
         } catch (InterruptedException e) {
             System.out.println("crashed");
+        }
+    }
+    
+    public static void sendEmail(ArrayList<Appointment> appointments) {
+        Properties props = new Properties();
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.socketFactory.port", port);
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(
+                    Message.RecipientType.TO,
+                    InternetAddress.parse(to)
+            );
+            message.setSubject("New Road Test Openings!");
+            String emailText = "";
+            for (Appointment a : appointments) {
+                emailText += a.toString();
+                emailText += "\n";
+            }
+            message.setText(emailText);
+
+            Transport.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
     }
     
