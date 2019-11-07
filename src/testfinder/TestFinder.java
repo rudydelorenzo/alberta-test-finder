@@ -22,7 +22,6 @@ import org.openqa.selenium.support.ui.Select;
 //todo: add author info, add support for multiple platforms (different chromedrivers),
 //make way to launch easily, add support for firefox (not necessary)
 //make first github release
-//check internet connection beforehand
 
 public class TestFinder {
     
@@ -41,6 +40,10 @@ public class TestFinder {
     public static int port = 465;
     
     public static void main(String[] args) {     
+        startTesting();    
+    }
+    
+    public static void startTesting() {
         WebDriver driver;
 
         //use chrome
@@ -168,7 +171,6 @@ public class TestFinder {
         } catch (InterruptedException e) {
             System.out.println("InterruptedException thrown");
         }
-            
     }
     
     public static void sendEmail(ArrayList<Appointment> appointments) {
