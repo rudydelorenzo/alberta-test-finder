@@ -1,6 +1,10 @@
 package testfinder;
 
-import java.net.ConnectException;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -15,12 +19,12 @@ import javax.mail.internet.MimeMessage;
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.*;
-import org.openqa.selenium.firefox.*;
 import org.openqa.selenium.support.ui.Select;
 
 //todo: add author info, add support for multiple platforms (different chromedrivers),
 //make way to launch easily, add support for firefox (not necessary)
 //make first github release
+//check internet connection beforehand
 
 public class TestFinder {
     
@@ -62,8 +66,16 @@ public class TestFinder {
         });
         
         try {
+            
+            while (!isReachable("www.google.com")) {
+                //computer is offline
+                System.out.println("No internet connection, retrying in 10 seconds...");
+                Thread.sleep(10000);
+            }
+            
             while (driver.findElement(By.tagName("h1")).getText().equals("Service Unavailable")) {
                 // page is out of service, wait for a minute, then refresh
+                System.out.println("Page in maintainance or offline, waiting for a minute...");
                 Thread.sleep(60000);
                 driver.get(baseURL);
             }
@@ -156,7 +168,7 @@ public class TestFinder {
                 Thread.sleep(interval*1000);  // Pause before trying again
             }
         } catch (InterruptedException e) {
-            System.out.println("crashed");
+            System.out.println("InterruptedException thrown");
         }
             
     }
@@ -196,4 +208,18 @@ public class TestFinder {
             e.printStackTrace();
         }
     }
+    
+    private static boolean isReachable(String addr) {
+        // Any Open port on other machine
+        // openPort =  22 - ssh, 80 or 443 - webserver, 25 - mailserver etc.
+        try {
+            try (Socket soc = new Socket()) {
+                soc.connect(new InetSocketAddress(addr, 443), 20000);
+            }
+            return true;
+        } catch (IOException ex) {
+            return false;
+        }
+    }
+
 }
