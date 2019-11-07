@@ -38,25 +38,15 @@ public class TestFinder {
     public static String host = "smtp.gmail.com";
     public static int port = 465;
     
-    public static void main(String[] args) {
-        
+    public static void main(String[] args) {     
         WebDriver driver;
-        
-        String os = System.getProperty("os.name");
-        System.out.println(os);
-        if (os.toLowerCase().contains("mac")) {
-            //use chrome
-            System.setProperty("webdriver.chrome.driver","chromedriver");
-            ChromeOptions chromeOptions = new ChromeOptions();
-            if (headless) chromeOptions.addArguments("--headless");
-            if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
-            driver = new ChromeDriver(chromeOptions);
-        }
-        else {
-            //use firefox
-            System.setProperty("webdriver.gecko.driver","/usr/local/bin/geckodriver");
-            driver = new FirefoxDriver();
-        }
+
+        //use chrome
+        System.setProperty("webdriver.chrome.driver","chromedriver");
+        ChromeOptions chromeOptions = new ChromeOptions();
+        if (headless) chromeOptions.addArguments("--headless");
+        if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
+        driver = new ChromeDriver(chromeOptions);
 
         driver.get(baseURL);
 
