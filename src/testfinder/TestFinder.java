@@ -40,10 +40,11 @@ public class TestFinder {
     public static int port = 465;
     
     public static void main(String[] args) {     
-        startTesting();    
+        startTesting(Test.CLASS_5_BASIC);    
     }
     
-    public static void startTesting() {
+    public static void startTesting(String test) {
+        //params: test=test option to select (what class?)
         WebDriver driver;
 
         //use chrome
@@ -102,7 +103,7 @@ public class TestFinder {
             textBox.submit();
             //now we're selecting the test we're doing
             Select testDropDown = new Select(driver.findElement(By.id("serviceGroupList")));
-            testDropDown.selectByValue("7"); //class 3 is value 5, class 5 is 7
+            testDropDown.selectByValue(test);
             WebElement acceptTestTerms  = driver.findElement(By.id("labelAcceptTerms"));
             boolean failed = true;
             while (failed) {
