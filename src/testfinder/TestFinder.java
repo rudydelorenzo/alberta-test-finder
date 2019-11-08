@@ -48,7 +48,12 @@ public class TestFinder {
         WebDriver driver;
 
         //use chrome
-        System.setProperty("webdriver.chrome.driver","chromedriver");
+        String os = System.getProperty("os.name");
+        if (os.toLowerCase().contains("mac")) {
+            System.setProperty("webdriver.chrome.driver","chromedriver");
+        } else if (os.toLowerCase().contains("linux")) {
+            System.setProperty("webdriver.chrome.driver","/urs/bin/chromedriver");
+        }
         ChromeOptions chromeOptions = new ChromeOptions();
         if (headless) chromeOptions.addArguments("--headless");
         if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
