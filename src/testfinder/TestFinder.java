@@ -32,18 +32,23 @@ public class TestFinder {
     public static boolean noImages = true;
     
     //email stuff
-    public static String to = "rdelorenzo5@gmail.com";
+    public static ArrayList<String> to = new ArrayList();
     public static String from = "rdelorenzo5@gmail.com";
     public static final String username = "rdelorenzo5@gmail.com"; //change accordingly
     public static final String password = "Dancemusic5"; //change accordingly
     public static String host = "smtp.gmail.com";
     public static int port = 465;
     
-    public static void main(String[] args) {     
-        startTesting(Test.CLASS_5_BASIC);    
+    public static void main(String[] args) {
+        to.add("rdelorenzo5@gmail.com");
+        while (true) {
+            try {
+                startTesting(Test.CLASS_5_BASIC);
+            } catch (org.openqa.selenium.NoSuchElementException e) {}
+        }
     }
     
-    public static void startTesting(String test) {
+    public static void startTesting(String test) throws org.openqa.selenium.NoSuchElementException {
         //params: test=test option to select (what class?)
         WebDriver driver;
 
@@ -52,8 +57,9 @@ public class TestFinder {
         if (os.toLowerCase().contains("mac")) {
             System.setProperty("webdriver.chrome.driver","chromedriver");
         } else if (os.toLowerCase().contains("linux")) {
-            System.setProperty("webdriver.chrome.driver","/urs/bin/chromedriver");
+            System.setProperty("webdriver.chrome.driver","/usr/bin/chromedriver");
         }
+        
         ChromeOptions chromeOptions = new ChromeOptions();
         if (headless) chromeOptions.addArguments("--headless");
         if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
@@ -150,7 +156,12 @@ public class TestFinder {
                     }
                     if (different && !appointments.isEmpty()) {
                         //compose and send mail
-                        sendEmail(appointments);
+                        boolean returnValEmail = sendEmail(appointments);
+                        if (returnValEmail) {
+                            System.out.println("Email sent");
+                        } else {
+                            System.out.println("Email failed to send");
+                        }
                     }
                 } else {
                     //there are no openings
@@ -179,7 +190,7 @@ public class TestFinder {
         }
     }
     
-    public static void sendEmail(ArrayList<Appointment> appointments) {
+    public static boolean sendEmail(ArrayList<Appointment> appointments) {
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
         props.put("mail.smtp.port", port);
@@ -197,10 +208,12 @@ public class TestFinder {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
-            message.setRecipients(
-                    Message.RecipientType.TO,
-                    InternetAddress.parse(to)
-            );
+            for (String emailString : to) {
+                message.addRecipient(
+                    Message.RecipientType.CC,
+                    InternetAddress.parse(emailString)[0]
+                );
+            }
             message.setSubject("New Road Test Openings!");
             String emailText = "";
             for (Appointment a : appointments) {
@@ -210,8 +223,13 @@ public class TestFinder {
             message.setText(emailText);
 
             Transport.send(message);
+            return true;
         } catch (MessagingException e) {
             e.printStackTrace();
+            return false;
+        } catch (NoClassDefFoundError f) {
+            System.out.println("Top of call stack reached, no class def existed.");
+            return false;
         }
     }
     
