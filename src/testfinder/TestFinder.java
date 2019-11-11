@@ -33,7 +33,6 @@ public class TestFinder {
     public static boolean noImages = true;
     
     //email stuff
-    public static ArrayList<String> to = new ArrayList();
     public static String from = "rdelorenzo5@gmail.com";
     public static final String username = "rdelorenzo5@gmail.com"; //change accordingly
     public static final String password = "Dancemusic5"; //change accordingly
@@ -41,7 +40,17 @@ public class TestFinder {
     public static int port = 465;
     
     public static void main(String[] args) {
-        to.add("rdelorenzo5@gmail.com");
+        
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                //close driver correctlywhenever application exits
+                try {
+                    driver.quit();
+                } catch (WebDriverException e) {}
+                System.out.println("Driver stopped correctly!");
+            }
+        });
         
         //use chrome
         String os = System.getProperty("os.name");
@@ -57,27 +66,22 @@ public class TestFinder {
         driver = new ChromeDriver(chromeOptions);
         
         while (true) {
+            //read JSON file, this'll get refreshed daily when the website goes
+            //down for maintainance since it'll throw a NoSuchElementFound ex
+            ArrayList<String> emailList = new ArrayList();
+            emailList.add("rdelorenzo5@gmail.com");
+            ArrayList<Thread> threads = new ArrayList();
             try {
-                startTesting(Test.CLASS_5_BASIC);
-            } catch (org.openqa.selenium.NoSuchElementException e) {}
+                startTesting(Test.CLASS_5_BASIC, emailList);
+            } catch (org.openqa.selenium.NoSuchElementException e) {
+                System.out.println("Crash in main loop (NSEException thrown), restarting...");
+            }
         }
     }
     
-    public static void startTesting(String test) throws org.openqa.selenium.NoSuchElementException {
+    public static void startTesting(String test, ArrayList<String> emails) throws org.openqa.selenium.NoSuchElementException {
         //params: test=test option to select (what class?)
-
         driver.get(baseURL);
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                //close driver correctlywhenever application exits
-                try {
-                    driver.quit();
-                } catch (WebDriverException e) {}
-                System.out.println("Driver stopped correctly!");
-            }
-        });
         
         try {
             
@@ -157,7 +161,7 @@ public class TestFinder {
                     }
                     if (different && !appointments.isEmpty()) {
                         //compose and send mail
-                        boolean returnValEmail = sendEmail(appointments);
+                        boolean returnValEmail = sendEmail(appointments, emails);
                         if (returnValEmail) {
                             System.out.println("Email sent");
                         } else {
@@ -191,7 +195,7 @@ public class TestFinder {
         }
     }
     
-    public static boolean sendEmail(ArrayList<Appointment> appointments) {
+    public static boolean sendEmail(ArrayList<Appointment> appointments, ArrayList<String> emails) {
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
         props.put("mail.smtp.port", port);
@@ -209,7 +213,7 @@ public class TestFinder {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
-            for (String emailString : to) {
+            for (String emailString : emails) {
                 message.addRecipient(
                     Message.RecipientType.CC,
                     InternetAddress.parse(emailString)[0]
