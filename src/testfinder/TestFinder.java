@@ -28,6 +28,7 @@ public class TestFinder {
     public static String baseURL = "https://scheduler.itialb4dmv.com/SchAlberta/Applicant/Information";
     public static ArrayList<Appointment> previousResults = new ArrayList();
     public static int interval = 10; //in seconds
+    public static WebDriver driver;
     public static boolean headless = true;
     public static boolean noImages = true;
     
@@ -41,17 +42,7 @@ public class TestFinder {
     
     public static void main(String[] args) {
         to.add("rdelorenzo5@gmail.com");
-        while (true) {
-            try {
-                startTesting(Test.CLASS_5_BASIC);
-            } catch (org.openqa.selenium.NoSuchElementException e) {}
-        }
-    }
-    
-    public static void startTesting(String test) throws org.openqa.selenium.NoSuchElementException {
-        //params: test=test option to select (what class?)
-        WebDriver driver;
-
+        
         //use chrome
         String os = System.getProperty("os.name");
         if (os.toLowerCase().contains("mac")) {
@@ -64,6 +55,16 @@ public class TestFinder {
         if (headless) chromeOptions.addArguments("--headless");
         if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
         driver = new ChromeDriver(chromeOptions);
+        
+        while (true) {
+            try {
+                startTesting(Test.CLASS_5_BASIC);
+            } catch (org.openqa.selenium.NoSuchElementException e) {}
+        }
+    }
+    
+    public static void startTesting(String test) throws org.openqa.selenium.NoSuchElementException {
+        //params: test=test option to select (what class?)
 
         driver.get(baseURL);
 
