@@ -233,7 +233,7 @@ public class TestFinder {
             e.printStackTrace();
             return false;
         } catch (NoClassDefFoundError f) {
-            System.out.println("Top of call stack reached, no class def existed.");
+            System.out.println("NoClassDef while trying to send email, probably an error with activation.jar");
             return false;
         }
     }
