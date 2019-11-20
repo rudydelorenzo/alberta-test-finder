@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ATFServer;
 
 import java.io.DataInputStream;
@@ -11,32 +6,46 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
+import java.util.HashMap;
+
+import org.json.simple.*;
 
 public class ClientHandler extends Thread {
     final DataInputStream in; 
     final DataOutputStream out; 
     final Socket s;
+    final HashMap<String,String> data;
     
     public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos) { 
         this.s = s; 
         this.in = dis; 
-        this.out = dos; 
+        this.out = dos;
+        data = new HashMap<>();
     } 
   
     @Override
     public void run() { 
         String received; 
         while (true) { 
-            try { 
+            try {
                 // receive the answer from client 
                 received = in.readUTF(); 
                 
                 System.out.println(received);
-                  
-                // write on output stream based on the 
-                // input from the client 
+                
+                String lines[] = received.split("\n");
+                for (String line : lines) {
+                    String keyval[] = line.split(":");
+                    data.put(keyval[0], keyval[1]);
+                }
+                
+                if (data.get("action").equals("subscribe")) {
+                    //trying to subscribe
+                }
+                
+                // write on output stream based on the input from the client
                 switch (received) { 
-                    default: 
+                    default:
                         out.writeUTF("success:success"); 
                         this.in.close();
                         this.out.close();
