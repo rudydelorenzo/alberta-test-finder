@@ -38,6 +38,7 @@ public class TestFinder {
     public static final String password = "ilovealberta!12"; //change accordingly
     public static String host = "smtp.gmail.com";
     public static int port = 465;
+    public static Session session;
     
     public static void main(String[] args) {
         
@@ -51,6 +52,21 @@ public class TestFinder {
                 System.out.println("Driver stopped correctly!");
             }
         });
+        
+        //log into gmail
+        Properties props = new Properties();
+        props.put("mail.smtp.host", host);
+        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.socketFactory.port", port);
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        
+        session = Session.getInstance(props,
+            new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(username, password);
+                }
+            });
         
         //use chrome
         String os = System.getProperty("os.name");
@@ -196,20 +212,6 @@ public class TestFinder {
     }
     
     public static boolean sendEmail(ArrayList<Appointment> appointments, ArrayList<String> emails) {
-        Properties props = new Properties();
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.socketFactory.port", port);
-        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
-                    }
-                });
-
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
@@ -220,7 +222,7 @@ public class TestFinder {
                 );
             }
             message.setSubject("New Road Test Openings!");
-            String emailText = "";
+            String emailText = "To book your appointment go to https://scheduler.itialb4dmv.com/SchAlberta/Applicant/Information\n";
             for (Appointment a : appointments) {
                 emailText += a.toString();
                 emailText += "\n";
