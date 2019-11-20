@@ -33,9 +33,9 @@ public class TestFinder {
     public static boolean noImages = true;
     
     //email stuff
-    public static String from = "rdelorenzo5@gmail.com";
-    public static final String username = "rdelorenzo5@gmail.com"; //change accordingly
-    public static final String password = "Dancemusic5"; //change accordingly
+    public static String from = "artnotifications@gmail.com";
+    public static final String username = "artnotifications@gmail.com"; //change accordingly
+    public static final String password = "ilovealberta!12"; //change accordingly
     public static String host = "smtp.gmail.com";
     public static int port = 465;
     
@@ -74,7 +74,7 @@ public class TestFinder {
             try {
                 startTesting(Test.CLASS_5_BASIC, emailList);
             } catch (org.openqa.selenium.NoSuchElementException e) {
-                System.out.println("Crash in main loop (NSEException thrown), restarting...");
+                System.out.println("Crash in main loop (NSEException thrown), restarting..." + e.getStackTrace());
             }
         }
     }
@@ -215,7 +215,7 @@ public class TestFinder {
             message.setFrom(new InternetAddress(from));
             for (String emailString : emails) {
                 message.addRecipient(
-                    Message.RecipientType.CC,
+                    Message.RecipientType.BCC,
                     InternetAddress.parse(emailString)[0]
                 );
             }
