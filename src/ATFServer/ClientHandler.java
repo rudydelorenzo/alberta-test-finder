@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
-import java.util.HashMap;
+import static ATFServer.atfServerMain.json;
 
 import org.json.simple.*;
 
@@ -14,13 +14,11 @@ public class ClientHandler extends Thread {
     final DataInputStream in; 
     final DataOutputStream out; 
     final Socket s;
-    final HashMap<String,String> data;
     
     public ClientHandler(Socket s, DataInputStream dis, DataOutputStream dos) { 
         this.s = s; 
         this.in = dis; 
         this.out = dos;
-        data = new HashMap<>();
     } 
   
     @Override
@@ -34,13 +32,16 @@ public class ClientHandler extends Thread {
                 System.out.println(received);
                 
                 String lines[] = received.split("\n");
-                for (String line : lines) {
-                    String keyval[] = line.split(":");
-                    data.put(keyval[0], keyval[1]);
-                }
                 
-                if (data.get("action").equals("subscribe")) {
-                    //trying to subscribe
+                if (lines[0].split(":")[1].equals("subscribe")) {
+                    JSONObject newSub = new JSONObject();
+                    for (int i = 1; i < lines.length-1; i++) {
+                        String line = lines[i];
+                        String keyval[] = line.split(":");
+                        newSub.put(keyval[0], keyval[1]);
+                    }
+                    JSONArray a = (JSONArray) json.get(lines[lines.length-1]);
+                    a.add(newSub);
                 }
                 
                 // write on output stream based on the input from the client

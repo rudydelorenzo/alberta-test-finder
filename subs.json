@@ -1,4 +1,14 @@
-"subscriptions"{
-	{"email":"rdelorenzo5@gmail.com", "tests":["5B"]},
-	{"email":"delorenz@ualberta.ca", "tests":["5B"]}
+{"1": [],
+"2": [],
+"3": [],
+"4": [],
+"5b": [
+	{"email":"rdelorenzo5@gmail.com", "pass":"c73cd689726202a686bab2984e0006d94b31cde46151aa06ddf680ee5a8a4a69"},
+	{"email":"delorenz@ualberta.ca", "pass":"c73cd689726202a686bab2984e0006d94b31cde46151aa06ddf680ee5a8a4a69"}
+],
+"5a": [
+	{"email":"5ASub@gmail.com", "pass":"c73cd689726202a686bab2984e0006d94b31cde46151aa06ddf680ee5a8a4a69"}
+],
+"6b": [],
+"6a": []
 }
