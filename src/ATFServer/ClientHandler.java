@@ -40,14 +40,14 @@ public class ClientHandler extends Thread {
                         String keyval[] = line.split(":");
                         newSub.put(keyval[0], keyval[1]);
                     }
-                    JSONArray a = (JSONArray) json.get(lines[lines.length-1]);
+                    JSONArray a = (JSONArray) json.get(lines[lines.length-1].split(":")[1]);
                     a.add(newSub);
                 }
                 
                 // write on output stream based on the input from the client
                 switch (received) { 
                     default:
-                        out.writeUTF("success:success"); 
+                        out.writeUTF("success:Success"); 
                         this.in.close();
                         this.out.close();
                         break;

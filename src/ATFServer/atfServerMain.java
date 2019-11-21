@@ -3,11 +3,13 @@ package ATFServer;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -24,6 +26,25 @@ public class atfServerMain {
             
             Object obj = new JSONParser().parse(new FileReader("subs.json"));
             json = (JSONObject) obj;
+            
+            //if document was read correctly, schedule minute autosaves
+            Timer autoSave = new Timer();
+            autoSave.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        FileWriter file = new FileWriter("subs.json");
+                        file.write(json.toJSONString());
+                        file.close();
+                        
+                        System.out.println("Saved \"subs.json\"");
+                    } catch (IOException e) {
+                        System.out.println("IOException while saving file...");
+                        e.printStackTrace();
+                    }
+                }
+                
+            }, 60000, 60000); //first runs 60 seconds in, then runs every 60 seconds
             
             while (true) {
                 clientSocket = null;
