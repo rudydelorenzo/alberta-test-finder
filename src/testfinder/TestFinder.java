@@ -32,7 +32,7 @@ public class TestFinder extends Thread {
     public boolean headless = true;
     public boolean noImages = true;
     public String test;
-    public ArrayList<String> emails;
+    public ArrayList<String> emails = new ArrayList();
     
     //email stuff
     public String from = "artnotifications@gmail.com";
@@ -42,11 +42,10 @@ public class TestFinder extends Thread {
     public int port = 465;
     public Session session;
     
-    public TestFinder(String test) {
+    public TestFinder(String test, ArrayList<String> emails) {
         this.test = test;
         //next two lines only for testing
-        emails = new ArrayList();
-        emails.add("rdelorenzo5@gmail.com");
+        this.emails = emails;
         //log into gmail
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
@@ -91,7 +90,7 @@ public class TestFinder extends Thread {
             }
         });*/
         
-        
+        System.out.println("STARTED INSTANCE: " + test);
         
         while (true) {
             try {
