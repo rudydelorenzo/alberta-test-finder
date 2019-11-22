@@ -11,7 +11,7 @@ public class main {
                 case "-help":
                     printHelp() ;
                     break;
-                case "-t":
+                case "-r":
                     testfinder.instanceLauncher.main(noArgs);
                     break;
                 case "-s":
@@ -30,7 +30,7 @@ public class main {
         String helpText = 
                 "Welcome to the Alberta Test Finder launcher!\n"
                 + "Here are the supported flags:\n"
-                + "\t\"-t\"\tlaunches the test finder application.\n"
+                + "\t\"-r\"\tlaunches the test finder application.\n"
                 + "\t\"-s\"\tlaunches the ATF server to accept new subscribers.\n"
                 + "\t\"-h\"\tshows accepted flags\n"
                 + "\t\"-help\"";
