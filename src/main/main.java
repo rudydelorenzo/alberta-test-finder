@@ -36,5 +36,4 @@ public class main {
                 + "\t\"-help\"";
         System.out.println(helpText);
     }
-    
 }
