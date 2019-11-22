@@ -13,9 +13,10 @@
 
     <target name="-post-compile">
         <copy file="chromedriver" todir="${dist.dir}"/> 
+        <!-- <copy file="subs.json" todir="${dist.dir}"/> -->
         <setpermissions mode="755">
             <file file="${dist.dir}/chromedriver"/>
-        </setpermissions>   
+        </setpermissions>
     </target>
     <!--
 
