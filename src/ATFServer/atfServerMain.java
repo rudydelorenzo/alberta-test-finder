@@ -7,25 +7,32 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.json.simple.*;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import com.google.gson.Gson;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class atfServerMain {
     
     public static ServerSocket serverSocket;
     public static Socket clientSocket;
-    public static JSONObject json;
+    public static Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    public static LinkedHashMap<String,ArrayList> gsonContent;
     
     public static void main(String[] args) {
         try {
             serverSocket = new ServerSocket(4444);
             
-            Object obj = new JSONParser().parse(new FileReader("subs.json"));
-            json = (JSONObject) obj;
+            JsonReader reader = new JsonReader(new FileReader("subs.json"));
+            gsonContent = gson.fromJson(reader, LinkedHashMap.class);
             
             //if document was read correctly, schedule minute autosaves
             Timer autoSave = new Timer();
@@ -34,10 +41,14 @@ public class atfServerMain {
                 public void run() {
                     try {
                         FileWriter file = new FileWriter("subs.json");
-                        file.write(json.toJSONString());
+                        file.write(gson.toJson(gsonContent));
                         file.close();
                         
-                        System.out.println("Saved \"subs.json\"");
+                        Date date = new Date(System.currentTimeMillis());
+                        DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                        formatter.setTimeZone(TimeZone.getTimeZone("MST"));
+                        String dateFormatted = formatter.format(date);
+                        System.out.println(dateFormatted + ": " + "Saved \"subs.json\"");
                     } catch (IOException e) {
                         System.out.println("IOException while saving file...");
                         e.printStackTrace();
@@ -56,7 +67,7 @@ public class atfServerMain {
                 Thread t = new ClientHandler(clientSocket, in, out);
                 t.start();
             }
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

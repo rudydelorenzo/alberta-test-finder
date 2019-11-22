@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 
-import static ATFServer.atfServerMain.json;
+import java.util.ArrayList;
 
-import org.json.simple.*;
+import static ATFServer.atfServerMain.gsonContent;
+
+import com.google.gson.internal.LinkedTreeMap;
 
 public class ClientHandler extends Thread {
     final DataInputStream in; 
@@ -34,13 +36,13 @@ public class ClientHandler extends Thread {
                 String lines[] = received.split("\n");
                 
                 if (lines[0].split(":")[1].equals("subscribe")) {
-                    JSONObject newSub = new JSONObject();
+                    LinkedTreeMap newSub = new LinkedTreeMap();
                     for (int i = 1; i < lines.length-1; i++) {
                         String line = lines[i];
                         String keyval[] = line.split(":");
                         newSub.put(keyval[0], keyval[1]);
                     }
-                    JSONArray a = (JSONArray) json.get(lines[lines.length-1].split(":")[1]);
+                    ArrayList a = gsonContent.get(lines[lines.length-1].split(":")[1]);
                     a.add(newSub);
                 }
                 

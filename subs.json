@@ -1,1 +1,28 @@
-{"CLASS_1":[],"CLASS_2":[],"CLASS_3":[],"CLASS_4":[],"CLASS_5_ADVANCED":[{"email":"5ASub@gmail.com","pass":"c73cd689726202a686bab2984e0006d94b31cde46151aa06ddf680ee5a8a4a69"}],"CLASS_5_BASIC":[{"email":"rdelorenzo5@gmail.com","pass":"c73cd689726202a686bab2984e0006d94b31cde46151aa06ddf680ee5a8a4a69"},{"email":"signupfor5b@gmail.com","pass":"c73cd689726202a686bab2984e0006d94b31cde46151aa06ddf680ee5a8a4a69","email":"delorenz@ualberta.ca"},{"pass":"5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"}],"CLASS_6_ADVANCED":[],"CLASS_6_BASIC":[]}
+{
+  "CLASS_1": [],
+  "CLASS_2": [],
+  "CLASS_3": [],
+  "CLASS_4": [],
+  "CLASS_5_ADVANCED": [
+    {
+      "email": "5ASub@gmail.com",
+      "pass": "c73cd689726202a686bab2984e0006d94b31cde46151aa06ddf680ee5a8a4a69"
+    }
+  ],
+  "CLASS_5_BASIC": [
+    {
+      "email": "rdelorenzo5@gmail.com",
+      "pass": "c73cd689726202a686bab2984e0006d94b31cde46151aa06ddf680ee5a8a4a69"
+    },
+    {
+      "email": "signupfor5b@gmail.com",
+      "pass": "c73cd689726202a686bab2984e0006d94b31cde46151aa06ddf680ee5a8a4a69"
+    },
+    {
+      "email": "delorenz@ualberta.ca",
+      "pass": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"
+    }
+  ],
+  "CLASS_6_ADVANCED": [],
+  "CLASS_6_BASIC": []
+}
