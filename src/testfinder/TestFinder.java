@@ -23,36 +23,30 @@ import org.openqa.selenium.support.ui.Select;
 //make way to launch easily, add support for firefox (not necessary)
 //make first github release
 
-public class TestFinder {
+public class TestFinder extends Thread {
     
-    public static String baseURL = "https://scheduler.itialb4dmv.com/SchAlberta/Applicant/Information";
-    public static ArrayList<Appointment> previousResults = new ArrayList();
-    public static int interval = 10; //in seconds
-    public static WebDriver driver;
-    public static boolean headless = true;
-    public static boolean noImages = true;
+    public String baseURL = "https://scheduler.itialb4dmv.com/SchAlberta/Applicant/Information";
+    public ArrayList<Appointment> previousResults = new ArrayList();
+    public int interval = 10; //in seconds
+    public WebDriver driver;
+    public boolean headless = true;
+    public boolean noImages = true;
+    public String test;
+    public ArrayList<String> emails;
     
     //email stuff
-    public static String from = "artnotifications@gmail.com";
-    public static final String username = "artnotifications@gmail.com"; //change accordingly
-    public static final String password = "ilovealberta!12"; //change accordingly
-    public static String host = "smtp.gmail.com";
-    public static int port = 465;
-    public static Session session;
+    public String from = "artnotifications@gmail.com";
+    public final String username = "artnotifications@gmail.com"; //change accordingly
+    public final String password = "ilovealberta!12"; //change accordingly
+    public String host = "smtp.gmail.com";
+    public int port = 465;
+    public Session session;
     
-    public static void main(String[] args) {
-        
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                //close driver correctlywhenever application exits
-                try {
-                    driver.quit();
-                } catch (WebDriverException e) {}
-                System.out.println("Driver stopped correctly!");
-            }
-        });
-        
+    public TestFinder(String test) {
+        this.test = test;
+        //next two lines only for testing
+        emails = new ArrayList();
+        emails.add("rdelorenzo5@gmail.com");
         //log into gmail
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
@@ -80,22 +74,35 @@ public class TestFinder {
         if (headless) chromeOptions.addArguments("--headless");
         if (noImages) chromeOptions.addArguments("--blink-settings=imagesEnabled=false");
         driver = new ChromeDriver(chromeOptions);
+    }
+    
+    @Override
+    public void run() {
+        
+        /*
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                //close driver correctlywhenever application exits
+                try {
+                    driver.quit();
+                } catch (WebDriverException e) {}
+                println("Driver stopped correctly!");
+            }
+        });*/
+        
+        
         
         while (true) {
-            //read JSON file, this'll get refreshed daily when the website goes
-            //down for maintainance since it'll throw a NoSuchElementFound ex
-            ArrayList<String> emailList = new ArrayList();
-            emailList.add("rdelorenzo5@gmail.com");
-            ArrayList<Thread> threads = new ArrayList();
             try {
-                startTesting(Test.CLASS_5_BASIC, emailList);
+                startTesting();
             } catch (org.openqa.selenium.NoSuchElementException e) {
-                System.out.println("Crash in main loop (NSEException thrown), restarting..." + e.getStackTrace());
+                println("Crash in main loop (NSEException thrown), restarting..." + e.getStackTrace());
             }
         }
     }
     
-    public static void startTesting(String test, ArrayList<String> emails) throws org.openqa.selenium.NoSuchElementException {
+    public void startTesting() throws org.openqa.selenium.NoSuchElementException {
         //params: test=test option to select (what class?)
         driver.get(baseURL);
         
@@ -103,13 +110,13 @@ public class TestFinder {
             
             while (!isReachable("www.google.com")) {
                 //computer is offline
-                System.out.println("No internet connection, retrying in 10 seconds...");
+                println("No internet connection, retrying in 10 seconds...");
                 Thread.sleep(10000);
             }
             
             while (driver.findElement(By.tagName("h1")).getText().equals("Service Unavailable")) {
                 // page is out of service, wait for a minute, then refresh
-                System.out.println("Page in maintainance or offline, waiting for a minute...");
+                println("Page in maintainance or offline, waiting for a minute...");
                 Thread.sleep(60000);
                 driver.get(baseURL);
             }
@@ -135,7 +142,7 @@ public class TestFinder {
             textBox.submit();
             //now we're selecting the test we're doing
             Select testDropDown = new Select(driver.findElement(By.id("serviceGroupList")));
-            testDropDown.selectByValue(test);
+            testDropDown.selectByValue(Test.translateClassToValue(test));
             WebElement acceptTestTerms  = driver.findElement(By.id("labelAcceptTerms"));
             boolean failed = true;
             while (failed) {
@@ -179,9 +186,9 @@ public class TestFinder {
                         //compose and send mail
                         boolean returnValEmail = sendEmail(appointments, emails);
                         if (returnValEmail) {
-                            System.out.println("Email sent");
+                            println("Email sent");
                         } else {
-                            System.out.println("Email failed to send");
+                            println("Email failed to send");
                         }
                     }
                 } else {
@@ -192,9 +199,9 @@ public class TestFinder {
                 formatter.setTimeZone(TimeZone.getTimeZone("MST"));
                 String dateFormatted = formatter.format(date);
                 if (appointments.isEmpty()) {
-                    System.out.println(dateFormatted + ": No Openings");
+                    println(dateFormatted + ": No Openings");
                 } else {
-                    System.out.println(dateFormatted + ": " + appointments.size() + " Opening(s) Found");
+                    println(dateFormatted + ": " + appointments.size() + " Opening(s) Found");
                 }
                 //transfer contents from current results to previous results
                 previousResults = new ArrayList();
@@ -207,11 +214,11 @@ public class TestFinder {
                 Thread.sleep(interval*1000);  // Pause before trying again
             }
         } catch (InterruptedException e) {
-            System.out.println("InterruptedException thrown");
+            println("InterruptedException thrown");
         }
     }
     
-    public static boolean sendEmail(ArrayList<Appointment> appointments, ArrayList<String> emails) {
+    public boolean sendEmail(ArrayList<Appointment> appointments, ArrayList<String> emails) {
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
@@ -221,7 +228,7 @@ public class TestFinder {
                     InternetAddress.parse(emailString)[0]
                 );
             }
-            message.setSubject("New Road Test Openings!");
+            message.setSubject("New Road Test Openings! (" + test.replace("_", " ") + ")");
             String emailText = "To book your appointment go to https://scheduler.itialb4dmv.com/SchAlberta/Applicant/Information\n";
             for (Appointment a : appointments) {
                 emailText += a.toString();
@@ -235,12 +242,12 @@ public class TestFinder {
             e.printStackTrace();
             return false;
         } catch (NoClassDefFoundError f) {
-            System.out.println("NoClassDef while trying to send email, probably an error with activation.jar");
+            println("NoClassDef while trying to send email, probably an error with activation.jar");
             return false;
         }
     }
     
-    private static boolean isReachable(String addr) {
+    private boolean isReachable(String addr) {
         // Any Open port on other machine
         // openPort =  22 - ssh, 80 or 443 - webserver, 25 - mailserver etc.
         try {
@@ -251,6 +258,10 @@ public class TestFinder {
         } catch (IOException ex) {
             return false;
         }
+    }
+    
+    private void println(String toPrint) {
+        System.out.println("Thread " + test.toUpperCase() + ": " + toPrint);
     }
 
 }
