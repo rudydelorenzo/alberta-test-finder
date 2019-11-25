@@ -34,21 +34,24 @@ public class atfServerMain {
             JsonReader reader = new JsonReader(new FileReader("subs.json"));
             gsonContent = gson.fromJson(reader, LinkedHashMap.class);
             
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    //save file whenever application exits
+                    try {
+                        saveJSON();
+                    } catch (IOException e) {}
+                    System.out.println("Exiting...");
+                }
+            });
+            
             //if document was read correctly, schedule minute autosaves
             Timer autoSave = new Timer();
             autoSave.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
                     try {
-                        FileWriter file = new FileWriter("subs.json");
-                        file.write(gson.toJson(gsonContent));
-                        file.close();
-                        
-                        Date date = new Date(System.currentTimeMillis());
-                        DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-                        formatter.setTimeZone(TimeZone.getTimeZone("MST"));
-                        String dateFormatted = formatter.format(date);
-                        System.out.println(dateFormatted + ": " + "Saved \"subs.json\"");
+                        saveJSON();
                     } catch (IOException e) {
                         System.out.println("IOException while saving file...");
                         e.printStackTrace();
@@ -56,6 +59,8 @@ public class atfServerMain {
                 }
                 
             }, 60000, 60000); //first runs 60 seconds in, then runs every 60 seconds
+            
+            System.out.println("Server running!");
             
             while (true) {
                 clientSocket = null;
@@ -70,5 +75,17 @@ public class atfServerMain {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public static void saveJSON() throws IOException {
+        FileWriter file = new FileWriter("subs.json");
+        file.write(gson.toJson(gsonContent));
+        file.close();
+
+        Date date = new Date(System.currentTimeMillis());
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("MST"));
+        String dateFormatted = formatter.format(date);
+        System.out.println(dateFormatted + ": " + "Saved \"subs.json\"");
     }
 }

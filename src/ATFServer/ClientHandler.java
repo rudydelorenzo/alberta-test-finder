@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import static ATFServer.atfServerMain.gsonContent;
 
 import com.google.gson.internal.LinkedTreeMap;
+import java.util.Set;
 
 public class ClientHandler extends Thread {
     final DataInputStream in; 
@@ -44,6 +45,33 @@ public class ClientHandler extends Thread {
                     }
                     ArrayList a = gsonContent.get(lines[lines.length-1].split(":")[1]);
                     a.add(newSub);
+                } else if (lines[0].split(":")[1].equals("unsubscribe")) {
+                    //get all keys in file
+                    Set<String> testSet = gsonContent.keySet();
+                    //loop through keys
+                    Boolean found = false;
+                    ArrayList<String> log = new ArrayList();
+                    String email = lines[1].split(":")[1];
+                    String pass = lines[2].split(":")[1];
+                    for (String test : testSet) {
+                        ArrayList<LinkedTreeMap> a = gsonContent.get(test);
+                        for (int i = 0; i < a.size(); i++) {
+                            LinkedTreeMap sub = a.get(i);
+                            if (sub.get("email").equals(email)) {
+                                found = true;
+                                if (sub.get("pass").equals(pass)) {
+                                    a.remove(i);
+                                    i--;
+                                    log.add("Removed from " + test.replace("_", " "));
+                                } else {
+                                    log.add("Incorrect password for " + email + " in test " + test.replace("_", " "));
+                                }
+                            } else {
+                                //user doesn't exist in this test
+                            }
+                        }
+                    }
+                    System.out.println(log);
                 }
                 
                 // write on output stream based on the input from the client

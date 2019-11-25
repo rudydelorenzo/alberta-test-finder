@@ -21,9 +21,9 @@ import org.openqa.selenium.support.ui.Select;
 
 //todo: add author info, add support for multiple platforms (different chromedrivers),
 //make way to launch easily, add support for firefox (not necessary)
-//make first github release
+//make first github release7 
 
-public class TestFinder extends Thread {
+public class TestFinder extends Thread implements EndThreadInterface {
     
     public String baseURL = "https://scheduler.itialb4dmv.com/SchAlberta/Applicant/Information";
     public ArrayList<Appointment> previousResults = new ArrayList();
@@ -76,20 +76,7 @@ public class TestFinder extends Thread {
     }
     
     @Override
-    public void run() {
-        
-        /*
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                //close driver correctlywhenever application exits
-                try {
-                    driver.quit();
-                } catch (WebDriverException e) {}
-                println("Driver stopped correctly!");
-            }
-        });*/
-        
+    public void run() throws WebDriverException {
         System.out.println("STARTED INSTANCE: " + test);
         
         while (true) {
@@ -102,7 +89,6 @@ public class TestFinder extends Thread {
     }
     
     public void startTesting() throws org.openqa.selenium.NoSuchElementException {
-        //params: test=test option to select (what class?)
         driver.get(baseURL);
         
         try {
@@ -261,6 +247,12 @@ public class TestFinder extends Thread {
     
     private void println(String toPrint) {
         System.out.println("Thread " + test.toUpperCase() + ": " + toPrint);
+    }
+
+    @Override
+    public void endThread() {
+        driver.quit();
+        println("ENDED THREAD");
     }
 
 }
