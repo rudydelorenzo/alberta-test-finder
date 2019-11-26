@@ -1,16 +1,20 @@
 package testfinder;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 public class Appointment {
     
     private String place;
     //private int distance;
     private String address;
-    private String date;
-    private String time;
+    private LocalDate date;
+    private LocalTime time;
+    private static DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+    private static DateTimeFormatter tf = DateTimeFormatter.ofPattern("h:mm a");
     
-    public Appointment() {
-        
-    }
+    public Appointment() {}
     
     public void setPlace(String input) {
         place = input;
@@ -21,11 +25,11 @@ public class Appointment {
     }
     
     public void setDate(String input) {
-        date = input;
+        date = LocalDate.parse(input, df);
     }
     
     public void setTime(String input) {
-        time = input;
+        time = LocalTime.parse(input, tf);
     }
     
     public String getPlace() {
@@ -36,21 +40,29 @@ public class Appointment {
         return address;
     }
     
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
     
-    public String getTime() {
+    public LocalTime getTime() {
         return time;
+    }
+    
+    public String getDateString() {
+        return date.format(df);
+    }
+    
+    public String getTimeString() {
+        return time.format(tf);
     }
     
     @Override
     public String toString() {
-        String s = "-------------- APPOINTMENT --------------\n";
+        String s = "-------------- OPENING FOUND --------------\n";
         s += ("Place: " + place + "\n");
         s += ("Address: " + address + "\n");
-        s += ("Date: " + date + "\n");
-        s += ("Time: " + time + "\n");
+        s += ("Date: " + getDateString() + "\n");
+        s += ("Time: " + getTimeString() + "\n");
         return s;
     }
     

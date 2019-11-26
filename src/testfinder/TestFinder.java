@@ -214,7 +214,7 @@ public class TestFinder extends Thread implements EndThreadInterface {
                 );
             }
             message.setSubject("New Road Test Openings! (" + test.replace("_", " ") + ")");
-            String emailText = "To book your appointment go to https://scheduler.itialb4dmv.com/SchAlberta/Applicant/Information\n";
+            String emailText = "To book your appointment go to https://scheduler.itialb4dmv.com/SchAlberta/Applicant/Information\n\n";
             for (Appointment a : appointments) {
                 emailText += a.toString();
                 emailText += "\n";
